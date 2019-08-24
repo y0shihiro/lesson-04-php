@@ -75,4 +75,26 @@ class QuestionsController extends AppController
 
       $this->set(compact('question', 'answers', 'newAnswer'));
   }
+
+  /**
+   * 質問削除処理
+   * 
+   * @param int $id 質問ID
+   * @return \Cake\Http\Response|null 質問削除後に質問一覧画面へ遷移する
+   */
+  public function delete(int $id)
+  {
+      $this->request->allowMethod(['post']);
+
+      $question = $this->Questions->get($id);
+      // @TODO 質問を削除出来るのは質問投稿者のみとする
+
+      if ($this->Questions->delete($question)) {
+          $this->Flash->success('質問を削除しました');
+      } else {
+          $this->Flash->error('質問の削除に失敗しました');
+      }
+
+      return $this->redirect(['action' => 'index']);
+  }
 }
