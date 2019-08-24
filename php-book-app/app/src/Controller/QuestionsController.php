@@ -71,6 +71,8 @@ class QuestionsController extends AppController
           ->orderAsc('Answers.id')
           ->all();
 
-      $this->set(compact('question', 'answers'));
+      $newAnswer = $this->Answers->newEntity();
+
+      $this->set(compact('question', 'answers', 'newAnswer'));
   }
 }

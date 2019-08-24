@@ -42,3 +42,22 @@
     <?php endforeach; ?>
   <?php endif; ?>
 </section>
+<section class="answer-post mb-5">
+  <h2 class="mb-3"><i class="fas fa-comment-dots"></i> 回答する</h2>
+  <?php if ($answers->count() >= 100): ?>
+    <p class="text-center">回答数が上限に達しているためこれ以上回答することはできません</p>
+  <?php else: ?>
+    <?= $this->Form->create($newAnswer, ['url' => '/answers/add']) ?>
+    <?php
+    echo $this->Form->control('body', [
+      'type' => 'textarea',
+      'label' => false,
+      'value' => '',
+      'maxLength' => 200
+    ]);
+    echo $this->Form->hidden('question_id', ['value' => $question->id]);
+    ?>
+    <?= $this->Form->button('投稿する', ['class' => 'btn btn-warning']) ?>
+    <?= $this->Form->end() ?>
+  <?php endif; ?>
+</section>
