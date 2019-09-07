@@ -36,6 +36,7 @@
             <input id="save" type="checkbox" name="save" value="on"><label for="save">次回からは自動的にログインする</label>
           </dd>
         </dl>
+        <div><input type="submit" value="ログインする"></div>
       </form>
     </div>
   </div>
