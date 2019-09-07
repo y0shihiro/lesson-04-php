@@ -34,6 +34,12 @@ if (!empty($_POST)) {
     exit();
   }
 }
+
+//書き直し
+if ($_REQUEST['action'] == 'rewrite') {
+  $_POST = $_SESSION['join'];
+  $error['rewrite'] = true;
+}
 ?>
 <!DOCTYPE html>
 <html lang="ja">
