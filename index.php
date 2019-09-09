@@ -26,7 +26,11 @@ if (!empty($_POST)) {
     header('Location: index.php'); exit();
   }
 }
+
+//投稿を取得する
+$posts = $db->query('SELECT m.name, m.picture, p.* FROM members m, posts p WHERE m.id=p.member_id ORDER BY p.created DESC')
 ?>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -55,8 +59,20 @@ if (!empty($_POST)) {
         <input type="submit" value="投稿する">
       </div>
     </form>
-  </div>
 
+    <?php
+    foreach ($posts as $post):
+    ?>
+    <div class="msg">
+      <img src="member_picture/<?php echo htmlspecialchars($post['picture'], ENT_QUOTES); ?>" width="48" height="48" alt="<?php echo htmlspecialchars($post['name'], ENT_QUOTES); ?>">
+      <p><?php echo htmlspecialchars($post['message'], ENT_QUOTES); ?><span class="name"> (<?php echo htmlspecialchars($post['name'], ENT_QUOTES); ?>) </span></p>
+      <p class="day"><?php echo htmlspecialchars($post['created'], ENT_QUOTES); ?></p>
+    </div>
+    <?php 
+    endforeach;
+    ?>
+  </div>
+  
 </div>
 </body>
 </html>
