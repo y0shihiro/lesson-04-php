@@ -46,6 +46,11 @@ if (isset($_REQUEST['res'])) {
 function h($value) {
   return htmlspecialchars($value, ENT_QUOTES);
 }
+
+//本文内のURLにリンクを設定します
+function makeLink($value) {
+  return mb_ereg_replace("(https?)(://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)",'<a href="\1\2">\1\2</a>' , $value);
+}
 ?>
 
 <!DOCTYPE html>
@@ -84,7 +89,7 @@ function h($value) {
         ?>
         <div class="msg">
           <img src="member_picture/<?php echo h($post['picture']); ?>" width="48" height="48" alt="<?php echo h($post['name']); ?>">
-          <p><?php echo h($post['message']); ?><span class="name"> (<?php echo h($post['name']); ?>) </span>[<a href="index.php?res=<?php echo h($post['id']); ?>">Re</a>]</p>
+          <p><?php echo makeLink(h($post['message'])); ?><span class="name"> (<?php echo h($post['name']); ?>) </span>[<a href="index.php?res=<?php echo h($post['id']); ?>">Re</a>]</p>
           <p class="day"><a href="view.php?id=<?php echo h($post['id']); ?>"><?php echo h($post['created']); ?></a>
             <?php
               if ($post['reply_post_id'] > 0) :
