@@ -43,13 +43,15 @@ if (isset($_REQUEST['res'])) {
 }
 
 //htmlspecialcharsのショートカット
-function h($value) {
+function h($value)
+{
   return htmlspecialchars($value, ENT_QUOTES);
 }
 
 //本文内のURLにリンクを設定します
-function makeLink($value) {
-  return mb_ereg_replace("(https?)(://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)",'<a href="\1\2">\1\2</a>' , $value);
+function makeLink($value)
+{
+  return mb_ereg_replace("(https?)(://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)", '<a href="\1\2">\1\2</a>', $value);
 }
 ?>
 
@@ -96,6 +98,13 @@ function makeLink($value) {
                 ?>
               <a href="view.php?id=<?php echo h($post['reply_post_id']); ?>">返信元のメッセージ</a>
             <?php endif;
+              ?>
+            <?php
+              if ($_SESSION['id'] == $post['member_id']) :
+                ?>
+              [<a href="delete.php?id=<?php echo h($post['id']); ?>" style="color: #f33;">削除</a>]
+            <?php
+              endif;
               ?>
           </p>
         </div>
