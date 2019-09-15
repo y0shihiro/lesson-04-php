@@ -19,24 +19,16 @@
 <main>
 <h2>Practice</h2>
 <?php
-$id = $_REQUEST['id'];
-if (!is_numeric($id) || $id <= 0) {
-  print('1以上の数字で指定してください');
-  exit;
+if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+  $id = $_REQUEST['id'];
+  $statement = $db->prepare('DELETE FROM memos WHERE id=?');
+  $statement->execute(array($id));
 }
-
-$memos = $db->prepare('SELECT * FROM memos WHERE id=?');
-$memos->execute(array($_GET['id']));
-$memo = $memos->fetch();
 ?>
-<article>
-  <pre><?php print($memo['memo']); ?></pre>
-  <a href="update.php?id=<?php print($memo['id']); ?>">編集する</a>
-  |
-  <a href="delete.php?id=<?php print($memo['id']); ?>">削除する</a>
-  |
-  <a href="index.php">戻る</a>
-</article>
+<pre>
+  <p>メモを削除しました</p>
+  <p><a href="index.php">戻る</a></p>
+</pre>
 </main>
 </body>    
 </html>

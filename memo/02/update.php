@@ -19,24 +19,18 @@
 <main>
 <h2>Practice</h2>
 <?php
-$id = $_REQUEST['id'];
-if (!is_numeric($id) || $id <= 0) {
-  print('1以上の数字で指定してください');
-  exit;
+if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+  $id = $_GET['id'];
 }
-
 $memos = $db->prepare('SELECT * FROM memos WHERE id=?');
-$memos->execute(array($_GET['id']));
+$memos->execute(array($id));
 $memo = $memos->fetch();
 ?>
-<article>
-  <pre><?php print($memo['memo']); ?></pre>
-  <a href="update.php?id=<?php print($memo['id']); ?>">編集する</a>
-  |
-  <a href="delete.php?id=<?php print($memo['id']); ?>">削除する</a>
-  |
-  <a href="index.php">戻る</a>
-</article>
+<form action="update_do.php" method="post">
+  <input type="hidden" name="id" value="<?php print($id); ?>">
+  <textarea name="memo" cols="50" rows="10"><?php print($memo['memo']); ?></textarea><br>
+  <button type="submit">登録する</button>
+</form>
 </main>
 </body>    
 </html>
