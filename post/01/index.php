@@ -1,15 +1,16 @@
 <?php
-require('./dbconnect.php');
 session_start();
+require('dbconnect.php');
 
-//ログインの確認
-if (isset($_SESSION['id']) && $_SESSION['time'] + 60 > time()) {
+if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
+  //ログインしている
   $_SESSION['time'] = time();
 
   $members = $db->prepare('SELECT * FROM members WHERE id=?');
   $members->execute(array($_SESSION['id']));
   $member = $members->fetch();
 } else {
+  //ログインしていない
   header('Location: login.php');
   exit();
 }
@@ -30,7 +31,6 @@ if (!empty($_POST)) {
 }
 
 //投稿を取得する
-//ページ
 $page = $_REQUEST['page'];
 if ($page == '') {
   $page = 1;
@@ -53,20 +53,22 @@ $posts->execute();
 if (isset($_REQUEST['res'])) {
   $response = $db->prepare('SELECT m.name, m.picture, p.* FROM members m, posts p WHERE m.id=p.member_id AND p.id=? ORDER BY p.created DESC');
   $response->execute(array($_REQUEST['res']));
+
   $table = $response->fetch();
   $message = '@' . $table['name'] . ' ' . $table['message'];
 }
 
+//htmlspecialcharsのショートカット
 function h($value)
 {
   return htmlspecialchars($value, ENT_QUOTES);
 }
 
+//本文内のURLにリンクを設定します
 function makeLink($value)
 {
   return mb_ereg_replace("(https?)(://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)", '<a href="\1\2">\1\2</a>', $value);
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -87,7 +89,7 @@ function makeLink($value)
       <h1>ひとこと掲示板</h1>
     </div>
     <div id="content">
-      <div style="text-align: right"><a href="logout.php">ログアウト</a></div>
+      <div style="text-align:right"><a href="logout.php">ログアウト</a></div>
       <form action="" method="post">
         <dl>
           <dt><?php echo h($member['name']); ?>さん、メッセージをどうぞ</dt>
@@ -97,35 +99,39 @@ function makeLink($value)
           </dd>
         </dl>
         <div>
-          <p>
-            <input type="submit" value="投稿する">
-          </p>
+          <input type="submit" value="投稿する">
         </div>
       </form>
 
-      <!-- メッセージを表示させる -->
-      <?php foreach ($posts as $post) : ?>
+      <?php
+      foreach ($posts as $post) :
+        ?>
         <div class="msg">
-          <img src="../../member_picture/<?php echo h($post['picture']); ?>" width="48" height="48" alt="<?php echo h($post['name']); ?>">
-          <p>
-            <?php echo makeLink(h($post['message'])); ?>
-            <span class="name">（<?php echo h($post['name']); ?>）</span>
-            [<a href="index.php?res=<?php echo h($post['id']); ?>">Re</a>]
-          </p>
-          <p class="day">
-            <a href="view.php?id=<?php echo h($post['id']); ?>"><?php echo h($post['created']); ?></a>
-            <?php if ($post['reply_post_id'] > 0) : ?>
+          <img src="../../../../member_picture/<?php echo h($post['picture']); ?>" width="48" height="48" alt="<?php echo h($post['name']); ?>">
+          <p><?php echo makeLink(h($post['message'])); ?><span class="name"> (<?php echo h($post['name']); ?>) </span>[<a href="index.php?res=<?php echo h($post['id']); ?>">Re</a>]</p>
+          <p class="day"><a href="view.php?id=<?php echo h($post['id']); ?>"><?php echo h($post['created']); ?></a>
+            <?php
+              if ($post['reply_post_id'] > 0) :
+                ?>
               <a href="view.php?id=<?php echo h($post['reply_post_id']); ?>">返信元のメッセージ</a>
-            <?php endif; ?>
-            <?php if ($_SESSION['id'] == $post['member_id']) : ?>
-              [<a href="delete.php?id=<?php echo h($post['id']); ?>" style="color:#f33;">削除</a>]
-            <?php endif; ?>
+            <?php endif;
+              ?>
+            <?php
+              if ($_SESSION['id'] == $post['member_id']) :
+                ?>
+              [<a href="delete.php?id=<?php echo h($post['id']); ?>" style="color: #f33;">削除</a>]
+            <?php
+              endif;
+              ?>
           </p>
         </div>
-      <?php endforeach; ?>
+      <?php
+      endforeach;
+      ?>
 
       <ul class="paging">
-        <?php if ($page > 1) {
+        <?php
+        if ($page > 1) {
           ?>
           <li><a href="index.php?page=<?php print($page - 1); ?>">前のページへ</a></li>
         <?php
@@ -135,7 +141,8 @@ function makeLink($value)
         <?php
         }
         ?>
-        <?php if ($page < $maxPage) {
+        <?php
+        if ($page < $maxPage) {
           ?>
           <li><a href="index.php?page=<?php print($page + 1); ?>">次のページへ</a></li>
         <?php
@@ -147,6 +154,7 @@ function makeLink($value)
         ?>
       </ul>
     </div>
+
   </div>
 </body>
 

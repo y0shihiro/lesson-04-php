@@ -35,7 +35,7 @@ $posts->execute(array($_REQUEST['id']));
       <!-- メッセージを表示させる -->
       <?php if ($post = $posts->fetch()) : ?>
         <div class="msg">
-          <img src="../../member_picture/<?php echo htmlspecialchars($post['picture'], ENT_QUOTES); ?>" width="48" height="48" alt="<?php echo htmlspecialchars($post['name'], ENT_QUOTES); ?>">
+          <img src="../../../member_picture/<?php echo htmlspecialchars($post['picture'], ENT_QUOTES); ?>" width="48" height="48" alt="<?php echo htmlspecialchars($post['name'], ENT_QUOTES); ?>">
           <p>
             <?php echo htmlspecialchars($post['message'], ENT_QUOTES); ?>
             <span class="name">（<?php echo htmlspecialchars($post['name'], ENT_QUOTES); ?>）</span>
