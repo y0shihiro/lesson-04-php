@@ -1,3 +1,29 @@
+<?php
+require('../function.php');
+require('../dbconnect.php');
+session_start();
+
+if (!isset($_SESSION['join'])) {
+  header('Location: index.php');
+  exit();
+}
+
+//登録処理をする
+if (!empty($_POST)) {
+  $statement = $db->prepare('INSERT INTO members SET name=?, email=?, password=?, picture=?, created=NOW()');
+  $statement->execute(array(
+    $_SESSION['join']['name'],
+    $_SESSION['join']['email'],
+    sha1($_SESSION['join']['password']),
+    $_SESSION['join']['image']
+  ));
+  unset($_SESSION['join']);
+
+  header('Location: thanks.php');
+  exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -17,15 +43,22 @@
     </div>
     <div id="content">
       <form action="" method="post">
+        <input type="hidden" name="action" value="submit">
         <dl>
           <dt>ニックネーム</dt>
-          <dd></dd>
+          <dd>
+            <?php echo h($_SESSION['join']['name']); ?>
+          </dd>
           <dt>メールアドレス</dt>
-          <dd></dd>
+          <dd>
+            <?php echo h($_SESSION['join']['email']); ?>
+          </dd>
           <dt>パスワード</dt>
           <dd>【表示されません】</dd>
           <dt>写真など</dt>
-          <dd></dd>
+          <dd>
+            <img src="../member_picture/<?php echo h($_SESSION['join']['image']); ?>" width="100" height="100" alt="">
+          </dd>
         </dl>
         <div>
           <a href="index.php?action=rewrite">&laquo;&nbsp;書き直す</a>
