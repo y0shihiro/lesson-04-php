@@ -20,10 +20,11 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
 //投稿を記録する
 if (!empty($_POST)) {
   if ($_POST['message'] != '') {
-    $message = $db->prepare('INSERT INTO posts SET member_id=?, message=?, created=NOW()');
+    $message = $db->prepare('INSERT INTO posts SET member_id=?, message=?, reply_post_id=?, created=NOW()');
     $message->execute(array(
       $member['id'],
-      $_POST['message']
+      $_POST['message'],
+      $_POST['reply_post_id']
     ));
 
     //リロードによる投稿の重複を防ぐ処理
@@ -34,6 +35,14 @@ if (!empty($_POST)) {
 
 //投稿を取得する
 $posts = $db->query('SELECT m.name, m.picture, p.* FROM members m, posts p WHERE m.id=p.member_id ORDER BY p.created DESC');
+
+//返信の場合
+if (isset($_REQUEST['res'])) {
+  $response = $db->prepare('SELECT m.name, m.picture, p.* FROM members m, posts p WHERE m.id=p.member_id AND p.id=? ORDER BY p.created DESC');
+  $response->execute(array($_REQUEST['res']));
+  $table = $response->fetch();
+  $message = '@' . $table['name'] . ' ' . $table['message'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -58,7 +67,8 @@ $posts = $db->query('SELECT m.name, m.picture, p.* FROM members m, posts p WHERE
         <dl>
           <dt><?php echo h($member['name']); ?>さん、メッセージをどうぞ</dt>
           <dd>
-            <textarea name="message" cols="50" rows="5"></textarea>
+            <textarea name="message" cols="50" rows="5"><?php echo h($message); ?></textarea>
+            <input type="hidden" name="reply_post_id" value="<?php echo h($_REQUEST['res']); ?>">
           </dd>
         </dl>
         <div>
@@ -69,7 +79,7 @@ $posts = $db->query('SELECT m.name, m.picture, p.* FROM members m, posts p WHERE
       <?php foreach ($posts as $post) : ?>
         <div class="msg">
           <img src="member_picture/<?php echo h($post['picture']); ?>" width="48" height="48" alt="<?php echo h($post['name']); ?>">
-          <p><?php echo h($post['message']); ?><span class="name">（<?php echo h($post['name']); ?>）</span></p>
+          <p><?php echo h($post['message']); ?><span class="name">（<?php echo h($post['name']); ?>）</span>[<a href="index.php?res=<?php echo h($post['id']); ?>">Re</a>]</p>
           <p class="day"><?php echo h($post['created']); ?></p>
         </div>
       <?php endforeach; ?>
