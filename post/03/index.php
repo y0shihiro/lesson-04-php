@@ -4,7 +4,7 @@ require('./function.php');
 
 session_start();
 
-if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
+if (isset($_SESSION['id']) && $_SESSION['time'] + 60 > time()) {
   //ログインしている
   $_SESSION['time'] = time();
 
@@ -20,6 +20,9 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
 //投稿を記録する
 if (!empty($_POST)) {
   if ($_POST['message'] != '') {
+    if ($_POST['reply_post_id'] == '') {
+      $_POST['reply_post_id'] = NULL;
+    }
     $message = $db->prepare('INSERT INTO posts SET member_id=?, message=?, reply_post_id=?, created=NOW()');
     $message->execute(array(
       $member['id'],
@@ -80,7 +83,12 @@ if (isset($_REQUEST['res'])) {
         <div class="msg">
           <img src="member_picture/<?php echo h($post['picture']); ?>" width="48" height="48" alt="<?php echo h($post['name']); ?>">
           <p><?php echo h($post['message']); ?><span class="name">（<?php echo h($post['name']); ?>）</span>[<a href="index.php?res=<?php echo h($post['id']); ?>">Re</a>]</p>
-          <p class="day"><?php echo h($post['created']); ?></p>
+          <p class="day">
+            <a href="view.php?id=<?php echo h($post['id']); ?>"><?php echo h($post['created']); ?></a>
+            <?php if ($post['reply_post_id'] > 0) : ?>
+              <a href="view.php?id=<?php echo h($post['reply_post_id']); ?>">返信元のメッセージ</a>
+            <?php endif; ?>
+          </p>
         </div>
       <?php endforeach; ?>
     </div>
