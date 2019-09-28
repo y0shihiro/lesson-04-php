@@ -73,10 +73,10 @@ if (isset($_REQUEST['res'])) {
             <textarea name="message" cols="50" rows="5"><?php echo h($message); ?></textarea>
             <input type="hidden" name="reply_post_id" value="<?php echo h($_REQUEST['res']); ?>">
           </dd>
+          <div>
+            <input type="submit" value="投稿する">
+          </div>
         </dl>
-        <div>
-          <input type="submit" value="投稿する">
-        </div>
       </form>
 
       <?php foreach ($posts as $post) : ?>
@@ -87,6 +87,9 @@ if (isset($_REQUEST['res'])) {
             <a href="view.php?id=<?php echo h($post['id']); ?>"><?php echo h($post['created']); ?></a>
             <?php if ($post['reply_post_id'] > 0) : ?>
               <a href="view.php?id=<?php echo h($post['reply_post_id']); ?>">返信元のメッセージ</a>
+            <?php endif; ?>
+            <?php if ($_SESSION['id'] == $post['member_id']) : ?>
+              [<a href="delete.php?id=<?php echo h($post['id']); ?>" style="color: #f33">削除</a>]
             <?php endif; ?>
           </p>
         </div>
