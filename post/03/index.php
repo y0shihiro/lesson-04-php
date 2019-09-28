@@ -82,7 +82,7 @@ if (isset($_REQUEST['res'])) {
       <?php foreach ($posts as $post) : ?>
         <div class="msg">
           <img src="member_picture/<?php echo h($post['picture']); ?>" width="48" height="48" alt="<?php echo h($post['name']); ?>">
-          <p><?php echo h($post['message']); ?><span class="name">（<?php echo h($post['name']); ?>）</span>[<a href="index.php?res=<?php echo h($post['id']); ?>">Re</a>]</p>
+          <p><?php echo makeLink(h($post['message'])); ?><span class="name">（<?php echo h($post['name']); ?>）</span>[<a href="index.php?res=<?php echo h($post['id']); ?>">Re</a>]</p>
           <p class="day">
             <a href="view.php?id=<?php echo h($post['id']); ?>"><?php echo h($post['created']); ?></a>
             <?php if ($post['reply_post_id'] > 0) : ?>
