@@ -143,3 +143,16 @@ li {
 	font-size: 80%;
 	color: #999;
 }
+
+/* いいねボタン */
+.heart,
+.heart__red {
+	text-decoration: none;
+}
+.msg .day .heart:hover {
+	color: red;
+}
+.msg .day .heart__red {
+	font-size: 20px;
+	color: red;
+}
