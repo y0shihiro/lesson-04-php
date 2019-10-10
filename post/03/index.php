@@ -51,7 +51,7 @@ $page = min($page, $maxPage);
 
 $start = ($page - 1) * 5;
 
-$posts = $db->prepare('SELECT m.name, m.picture, p.*, COUNT(g.post_id) AS good_cnt, g.member_id AS user_id FROM members m, posts p LEFT JOIN good g ON p.id=g.post_id WHERE m.id=p.member_id GROUP BY g.post_id ORDER BY p.created DESC LIMIT ?, 5');
+$posts = $db->prepare('SELECT m.name, m.picture, p.*, COUNT(l.post_id) AS like_cnt, l.member_id AS likes_member_id FROM members m, posts p LEFT JOIN likes l ON p.id=l.post_id WHERE m.id=p.member_id GROUP BY l.post_id ORDER BY p.created DESC LIMIT ?, 5');
 $posts->bindParam(1, $start, PDO::PARAM_INT);
 $posts->execute();
 
@@ -64,37 +64,37 @@ if (isset($_REQUEST['res'])) {
 }
 
 //いいねボタン
-if (isset($_REQUEST['good'])) {
+if (isset($_REQUEST['like'])) {
 
   //いいねを押したメッセージの投稿者を調べる
-  $pressed_message = $db->prepare('SELECT member_id FROM posts WHERE id=?');
-  $pressed_message->execute(array($_REQUEST['good']));
-  $contributor = $pressed_message->fetch();
+  $contributor = $db->prepare('SELECT member_id FROM posts WHERE id=?');
+  $contributor->execute(array($_REQUEST['like']));
+  $pressed_message = $contributor->fetch();
 
   //いいねを押した人とメッセージ投稿者が同一人物でないか確認
-  if ($_SESSION['id'] != $contributor['member_id']) {
+  if ($_SESSION['id'] != $pressed_message['member_id']) {
 
     //過去にいいね済みであるか確認
-    $times = $db->prepare('SELECT COUNT(*) AS cnt FROM good WHERE post_id=? AND member_id=?');
-    $times->execute(array(
-      $_REQUEST['good'],
+    $pressed = $db->prepare('SELECT COUNT(*) AS cnt FROM likes WHERE post_id=? AND member_id=?');
+    $pressed->execute(array(
+      $_REQUEST['like'],
       $_SESSION['id']
     ));
-    $my_good_cnt = $times->fetch();
+    $my_like_cnt = $pressed->fetch();
 
     //いいねのデータを挿入or削除
-    if ($my_good_cnt['cnt'] < 1) {
-      $goods = $db->prepare('INSERT INTO good SET post_id=?, member_id=?, created=NOW()');
-      $goods->execute(array(
-        $_REQUEST['good'],
+    if ($my_like_cnt['cnt'] < 1) {
+      $press = $db->prepare('INSERT INTO likes SET post_id=?, member_id=?, created=NOW()');
+      $press->execute(array(
+        $_REQUEST['like'],
         $_SESSION['id']
       ));
       header("Location: index.php?page={$page}");
       exit();
     } else {
-      $goods = $db->prepare('DELETE FROM good WHERE post_id=? AND member_id=?');
-      $goods->execute(array(
-        $_REQUEST['good'],
+      $cancel = $db->prepare('DELETE FROM likes WHERE post_id=? AND member_id=?');
+      $cancel->execute(array(
+        $_REQUEST['like'],
         $_SESSION['id']
       ));
       header("Location: index.php?page={$page}");
@@ -104,7 +104,7 @@ if (isset($_REQUEST['good'])) {
 }
 
 //ログインしている人がいいねしたメッセージをすべて取得
-$like = $db->prepare('SELECT post_id FROM good WHERE member_id=?');
+$like = $db->prepare('SELECT post_id FROM likes WHERE member_id=?');
 $like->execute(array($_SESSION['id']));
 while ($like_record = $like->fetch()) {
   $my_like[] = $like_record;
@@ -159,9 +159,9 @@ while ($like_record = $like->fetch()) {
             <?php
               $my_like_cnt = 0;
               if (!empty($my_like)) {
-                foreach ($my_like as $post_id) {
-                  foreach ($post_id as $like_post) {
-                    if ($like_post == $post['id']) {
+                foreach ($my_like as $like_post) {
+                  foreach ($like_post as $like_post_id) {
+                    if ($like_post_id == $post['id']) {
                       $my_like_cnt = 1;
                     }
                   }
@@ -169,11 +169,11 @@ while ($like_record = $like->fetch()) {
               }
               ?>
             <?php if ($my_like_cnt < 1) : ?>
-              <a class="heart" href="index.php?good=<?php echo h($post['id']); ?>&page=<?php echo h($page); ?>">&#9825;</a>
+              <a class="heart" href="index.php?like=<?php echo h($post['id']); ?>&page=<?php echo h($page); ?>">&#9825;</a>
             <?php else : ?>
-              <a class="heart__red" href="index.php?good=<?php echo h($post['id']); ?>&page=<?php echo h($page); ?>">&#9829;</a>
+              <a class="heart__red" href="index.php?like=<?php echo h($post['id']); ?>&page=<?php echo h($page); ?>">&#9829;</a>
             <?php endif; ?>
-            <span><?php echo h($post['good_cnt']); ?></span>
+            <span><?php echo h($post['like_cnt']); ?></span>
 
             <?php if ($post['reply_post_id'] > 0) : ?>
               <a href="view.php?id=<?php echo h($post['reply_post_id']); ?>">返信元のメッセージ</a>
