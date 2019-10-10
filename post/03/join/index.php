@@ -74,16 +74,16 @@ if ($_REQUEST['action'] == 'rewrite') {
       <p>次のフォームに必要事項をご記入ください</p>
       <form action="" method="post" enctype="multipart/form-data">
         <dl>
-          <dt>ニックネーム<span class="required">必須</span></dt>
+          <dt><label for="name">ニックネーム<span class="required">必須</span></label></dt>
           <dd>
-            <input type="text" name="name" size="35" maxlength="255" value="<?php h($_POST['name']); ?>">
+            <input type="text" name="name" id="name" size="35" maxlength="255" value="<?php h($_POST['name']); ?>">
             <?php if ($error['name'] == 'blank') : ?>
               <p class="error">* ニックネームを入力してください</p>
             <?php endif; ?>
           </dd>
-          <dt>メールアドレス<span class="required">必須</span></dt>
+          <dt><label for="email">メールアドレス<span class="required">必須</span></label></dt>
           <dd>
-            <input type="text" name="email" size="35" maxlength="255" value="<?php h($_POST['email']); ?>">
+            <input type="text" name="email" id="email" size="35" maxlength="255" value="<?php h($_POST['email']); ?>">
             <?php if ($error['email'] == 'blank') : ?>
               <p class="error">* メールアドレスを入力してください</p>
             <?php endif; ?>
@@ -91,9 +91,9 @@ if ($_REQUEST['action'] == 'rewrite') {
               <p class="error">* 指定されたメールアドレスはすでに登録されています</p>
             <?php endif; ?>
           </dd>
-          <dt>パスワード<span class="required">必須</span></dt>
+          <dt><label for="password">パスワード<span class="required">必須</span></label></dt>
           <dd>
-            <input type="password" name="password" size="10" maxlength="20" value="<?php h($_POST['password']); ?>">
+            <input type="password" name="password" id="password" size="10" maxlength="20" value="<?php h($_POST['password']); ?>">
             <?php if ($error['password'] == 'blank') : ?>
               <p class="error">* パスワードを入力してください</p>
             <?PHP endif; ?>
@@ -101,9 +101,9 @@ if ($_REQUEST['action'] == 'rewrite') {
               <p class="error">* パスワードは４文字以上で入力してください</p>
             <?php endif; ?>
           </dd>
-          <dt>写真など</dt>
+          <dt><label for="image">写真など</label></dt>
           <dd>
-            <input type="file" name="image" size="35">
+            <input type="file" name="image" id="image" size="35">
             <?php if ($error['image'] == 'type') : ?>
               <p class="error">* 写真などは「.gif」または「.jpg」の画像を指定してください</p>
             <?php endif; ?>

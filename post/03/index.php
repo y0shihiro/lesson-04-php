@@ -133,9 +133,9 @@ while ($like_record = $like->fetch()) {
       <div style="text-align: right"><a href="logout.php">ログアウト</a></div>
       <form action="" method="post">
         <dl>
-          <dt><?php echo h($member['name']); ?>さん、メッセージをどうぞ</dt>
+          <dt><label for="message"><?php echo h($member['name']); ?>さん、メッセージをどうぞ</label></dt>
           <dd>
-            <textarea name="message" cols="50" rows="5"><?php echo h($message); ?></textarea>
+            <textarea name="message" id="message" cols="50" rows="5"><?php echo h($message); ?></textarea>
             <input type="hidden" name="reply_post_id" value="<?php echo h($_REQUEST['res']); ?>">
           </dd>
           <div>
