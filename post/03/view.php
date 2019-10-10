@@ -35,7 +35,7 @@ $posts->execute(array($_REQUEST['id']));
       <p>&laquo;<a href="index.php">一覧に戻る</a></p>
       <?php if ($post = $posts->fetch()) : ?>
         <div class="msg">
-          <img src="member_picture/<?php echo h($post['picture']); ?>" width="48" height="48" alt="<?php echo h($post['name']); ?>">
+          <img src="../../../member_picture/<?php echo h($post['picture']); ?>" width="48" height="48" alt="<?php echo h($post['name']); ?>">
           <p><?php echo h($post['message']); ?><span class="name">（<?php echo h($post['name']); ?>）</span></p>
           <p class="day"><?php echo h($post['created']); ?></p>
         </div>
