@@ -12,7 +12,9 @@
  * @license   https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace App\View;
+
 use Cake\View\View;
+
 /**
  * Application View
  *
